@@ -1,0 +1,25 @@
+✅ 1. Test Arduino -> ultrasonic
+2. Test Arduino -> two ultrasonics
+    a. y splitter
+    b. update script
+✅ 3. Test Arduino -> microphone
+4. Test Arduino -> Pi 
+✅ 5. Test Pi -> Camera
+6. Test new Remote
+7. Test Pi -> Remote
+    a. Level Converter
+    b. script
+8. Off and on Manual
+9. Test Power via PDB
+10. Use google's audio cat detection
+11. Put OpenCV Yolov11 on the pi
+10. Write auto script
+11. Update sensor data quality
+12. Update code module quality
+13. Print new custom parts
+
+
+scp /Users/zach.wadzinski/Documents/cat.jpeg wmkd@wmkd.local:/home/wmkd
+scp ~/wmkd/runs/detect/predict/cat.jpg zach.wadzinski@10.0.0.56:~/Downloads/
+
+yolo detect predict model=yolo11n.pt source=cat.jpeg classes=15

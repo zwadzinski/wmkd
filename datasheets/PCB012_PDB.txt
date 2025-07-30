@@ -1,0 +1,6 @@
+You can select any type for power input,4V to 24V,AC or DC. There is no limit on the input current because there is a output current controller can adapt the output current.
+Be with dimmer control for LED lights and can adjust light brightness.(Clockwise=brighter)
+Output Voltage Controller: Controller at 3V,output is stable 3V;Controller at DIR,output is near to the input;Controller at 12V,output is stable 12V.
+One distributor can support up to 28 lights.It is easy to expand to several boards if you need to use more light.And please support the lights that need the same current and voltage in one distributor.Do not mix the lights with different operating current and voltage on the same distributor.You can prepare another Power Distribution Board to use as the expanding one.
+The total output current must be less than the input current.For example,normally one led light need 20mA,one 1000mA transformer can support 50 such led light totally,but it will only support 10 pieces 100mA bulb lights.
+California Prop 65 WARNING: This product contains chemicals known to the State of California to cause cancer and birth defects or other reproductive harm. Wash hands after handling.

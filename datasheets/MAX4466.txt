@@ -1,0 +1,7 @@
+MAX4466 Sound Sensor: Realize sound detection, analysis and recognition, and effectively amplify and preprocess weak sound signals so that subsequent algorithms can extract and analyze sound features
+Supply voltage: 2.4 - 5.5V
+Static supply current: 24μA
+Gain bandwidth: 600kHz
+Widely used in music playback, speech recognition, voice communication and other fields, it can improve the sensitivity and sound quality of the audio system
+
+3 pins, OUT - GND - VCC

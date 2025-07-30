@@ -1,0 +1,194 @@
+Maker’s Supply
+User’s Manual
+
+CyberBrick
+
+1. Features
+•
+
+2.4Ghz wireless remote control, 10m control distance with an ultra-small size.
+
+•
+
+High cost-performance ratio, suitable for car, ship and tank models, etc.
+
+•
+
+Provide up to 10 channels for connecting different devices.
+
+•
+
+Transmitter Input Voltage: 4.5V~12.6V（1S-3S）, operating current: 65mA.
+
+•
+
+Receiver Input Voltage: 7.4V-12.6V（2S-3S）, standby current: 60mA, operating
+
+current: 200~300mA, maximum current: 3A.
+•
+
+Support configuration on mobile phones& PCs, with a user-friendly interface.
+
+2. Receiver&Transmitter Shield
+Remote Control Transmitter Shield
+
+On the left and right sides of the transmitter shield, there are respectively 3 ADC input
+channels. Below it, there are 4 digital input channels. The gray slot on the back is the
+slot for the multi-function controller core. It can be powered through the XH2.54 power
+input.
+•
+
+ADC input port L1~L3，R1~L3: 3pin SH1.0 slot. Connectable with single/dual
+
+axis joystick module, three-position rocker switch module, etc.
+•
+
+Digital input Port K1~K4: 2pin SH1.0 slot. Connectable with momentary
+
+button module, etc.
+•
+
+XH2.54 DC power input: 2pin XH2.54slot. Connectable with 4.5V~12.6V
+
+power supply.
+
+Remote Control Receiver Shield
+
+On the left and right sides of the receiver shield, there is respectively a DC motor port
+and a WS2812 port. In the center, there are 4 servo ports. It can be powered through
+the XH2.54 power input.
+•
+
+DC Motor Port M1、M2: 2pin SH1.0 slot. Connectable with DC motor, supporting
+
+forward and reverse rotation control& PWM speed regulation.
+•
+
+WS2812 Port D1、D2: 3pin SH1.0slot. Connectable with WS2812 LED hubs or
+
+other light strips that use the WS2812 protocol.
+•
+
+Servo Port S1~S4: 3pin header. Connectable with universal 5V servo motors.
+
+•
+
+Core Slot: A double-row gray slot. Connectable with multi-function controller
+
+core.
+•
+
+XH2.54 Power Input: 2pin XH2.54 slot. Connectable with 7.4V~12.6V power
+
+supply.
+
+Multi-Function Controller Core
+
+•
+
+Stamp Cut: Solderable Pinout. It allows users to solder leads to achieve
+
+customized circuit connections.
+•
+
+Reset Button：Press to reset main program.
+
+•
+
+User Button：Custom Function.
+
+•
+
+Type-C Port：Type-C Port. Connect to the PC via a data cable for programming
+
+and burning the program.
+•
+
+Pin Header：Pin Header. Connectable with Shield.
+
+Hardware connection between controller core and remote
+control transmitter/receiver shield
+As shown in the figure, the controller core, the remote control receiver shield, and the
+remote control transmitter shield have antenna symbols. When making the connection,
+it is necessary to ensure that the orientations of these three symbols are the same
+and the pins correspond to each other one by one.
+
+Orientations of these three symbols are the same.
+
+Pins correspond to each other one by one.
+
+Definition of the System Status Indicator
+•
+
+Powered on but not connected: green light on
+
+•
+
+Bluetooth connected: blue light on
+
+•
+
+2.4Ghz connected：yellow light on
+
+•
+
+Bluetooth& 2.4Ghz connected：light flashes alternately between blue and yellow
+
+•
+
+Profile upgrading: green light flashes at a frequency of 2Hz and continues until
+
+the transmission ends.
+•
+
+Control object recognition: The green light flashes at a frequency of 1 Hz for 5
+
+seconds.
+
+Connect to the RC Transmitter& Receiver on the PC client.
+Power the controller core through the Type-C port or the XH2.54 Power Port on the
+expansion shield.
+
+Run CyberBrick client, switch to Device Management
+
+Click [+] to find your device
+
+Connect the device by entering the PIN code. If the PIN hasn't been set during the
+first connection, confirm directly.
+
+After successful connection, the indicator of controller core lights blue, and the client
+displays this device.
+
+Click on the expansion symbol in the upper right corner of the device. If you have
+connected multiple devices, click on Recognize, the status indicator of the selected
+
+device will flash green; if you need to disconnect with the selected device, click on
+Disconnect.
+
+Click on the device, you can change the name of the device in the upper right corner
+to make it easier to identify it when there are multiple devices.
+
+If you need to change the Pin code of the device, you can click Modify in the lower
+right corner and enter the new Pin code.
+
+Configure the core controller profile
+Click on the Configuration, click on Create Configuration, and start with a template, or
+an empty configuration[Custom].
+
+Here we take the custom empty configuration as an example, click on Custom and
+then click on Edit in the configuration list below.
+
+After entering the configuration interface, first, click Add Receiver on the left side, and
+input the name of the receiver.
+
+Click on the hardware connection above and drag the receiver device and controller
+device to the corresponding position.
+
+Click to start pairing. After pairing successfully, the status indicators of these devices
+should flash blue and yellow alternately.
+
+After modifying the configuration, remember to save the configuration locally with
+Save Config in the upper right corner, and update the configuration to the device with
+Send Config.
+
+

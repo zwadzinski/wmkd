@@ -1,0 +1,24 @@
+
+
+
+
+Brains
+    -Raspberry pi 5
+
+Power
+    -PCB012 PDB
+
+Sensors
+    -MAX446 microphone
+    -HCSR04 ultrasonic
+    -OV5647 Camera
+
+Remote Manual Control
+    -Shield X12 Remote Transmitter
+    -Shield X11 Remote Receiver
+    -Controller Core 
+
+Control
+    -360 servo
+    -180 servo
+    -180 servo
