@@ -9,18 +9,11 @@ import json
 import time
 import logging
 from datetime import datetime
-from dataclasses import dataclass
 from typing import Optional
 
-@dataclass
-class SensorReading:
-    timestamp: int
-    distance: float
-    sound_level: int
-    sound_raw: int
-    sound_detected: bool
-    proximity_alert: bool
-    received_at: datetime
+from sensor_data_processor import SensorDataProcessor, SensorReading
+from distance_sensor_receiver import DistanceSensorReceiver
+from sound_sensor_receiver import SoundSensorReceiver
 
 class ArduinoSensorReceiver:
     def __init__(self, port='/dev/ttyACM0', baudrate=9600, timeout=1):
@@ -44,6 +37,11 @@ class ArduinoSensorReceiver:
             format='%(asctime)s - %(levelname)s - %(message)s'
         )
         self.logger = logging.getLogger(__name__)
+        
+        # Initialize data processor and individual receivers
+        self.data_processor = SensorDataProcessor()
+        self.distance_receiver = DistanceSensorReceiver()
+        self.sound_receiver = SoundSensorReceiver()
         
     def connect(self):
         """Establish serial connection to Arduino"""
@@ -74,15 +72,21 @@ class ArduinoSensorReceiver:
                 json_str = line[5:]  # Remove "DATA:" prefix
                 data = json.loads(json_str)
                 
-                return SensorReading(
-                    timestamp=data['timestamp'],
-                    distance=data['distance'],
-                    sound_level=data['sound_level'],
-                    sound_raw=data['sound_raw'],
-                    sound_detected=data['sound_detected'],
-                    proximity_alert=data['proximity_alert'],
-                    received_at=datetime.now()
-                )
+                # Parse individual sensor data using their receivers
+                distance_reading = self.distance_receiver.parse_distance_data(data)
+                sound_reading = self.sound_receiver.parse_sound_data(data)
+                
+                # Combine into complete sensor reading if both are valid
+                if distance_reading and sound_reading:
+                    return SensorReading(
+                        timestamp=distance_reading.timestamp,
+                        distance=distance_reading.distance,
+                        sound_level=sound_reading.sound_level,
+                        sound_raw=sound_reading.sound_raw,
+                        sound_detected=sound_reading.sound_detected,
+                        proximity_alert=distance_reading.proximity_alert,
+                        received_at=datetime.now()
+                    )
         except (json.JSONDecodeError, KeyError) as e:
             self.logger.warning(f"Failed to parse data line: {line.strip()} - {e}")
         
@@ -110,7 +114,7 @@ class ArduinoSensorReceiver:
                     elif line.startswith("DATA:"):
                         reading = self.parse_data_line(line)
                         if reading:
-                            self.process_sensor_reading(reading)
+                            self.data_processor.process_sensor_reading(reading)
                     elif line.startswith("ALERT:"):
                         self.handle_alert_message(line)
                     elif line.startswith("CALIBRATION:"):
@@ -149,91 +153,24 @@ class ArduinoSensorReceiver:
         """Handle alert messages from Arduino"""
         alert_type = line.split(":", 1)[1]
         if alert_type == "PROXIMITY_AND_SOUND":
-            self.logger.warning("ALERT: Object close AND sound detected!")
-            self.on_proximity_and_sound_alert()
+            self.data_processor.handle_proximity_and_sound_alert()
         elif alert_type == "PROXIMITY_ONLY":
-            self.logger.info("ALERT: Object proximity detected")
-            self.on_proximity_alert()
+            self.data_processor.handle_proximity_alert()
+        elif alert_type == "SOUND_ONLY":
+            self.data_processor.sound_processor.handle_sound_alert()
     
-    def process_sensor_reading(self, reading: SensorReading):
-        """Process a complete sensor reading for real-time decision making"""
-        # Log the reading
-        self.logger.info(
-            f"Distance: {reading.distance:6.1f}cm | "
-            f"Sound: {reading.sound_level:3d}% | "
-            f"Detected: {'Yes' if reading.sound_detected else 'No'} | "
-            f"Proximity: {'Yes' if reading.proximity_alert else 'No'}"
-        )
-        
-        # Real-time decision making based on sensor data
-        self.make_realtime_decisions(reading)
-        
-        # Check for custom conditions
-        self.check_custom_conditions(reading)
+    def set_proximity_callback(self, callback):
+        """Set callback function for proximity alerts"""
+        self.data_processor.set_proximity_callback(callback)
+        self.data_processor.distance_processor.set_proximity_callback(callback)
     
-    def make_realtime_decisions(self, reading: SensorReading):
-        """Make real-time decisions based on sensor data"""
-        # This is where you'll implement your decision-making logic
-        # Examples of what you might do:
-        
-        # Example 1: Different responses based on distance ranges
-        if reading.distance > 0:  # Valid distance reading
-            if reading.distance < 5:
-                self.logger.warning("CRITICAL: Object very close!")
-                # Your action: Emergency stop, activate LED, sound alarm, etc.
-                
-            elif reading.distance < 20:
-                self.logger.info("CAUTION: Object nearby")
-                # Your action: Slow down, prepare to stop, etc.
-                
-            elif reading.distance < 50:
-                self.logger.debug("Object detected in range")
-                # Your action: Monitor, adjust course, etc.
-        
-        # Example 2: Sound-based decisions
-        if reading.sound_detected:
-            if reading.sound_level > 80:
-                self.logger.warning("LOUD sound detected - possible alert condition")
-                # Your action: Investigate, record event, etc.
-            elif reading.sound_level > 50:
-                self.logger.info("Moderate sound detected")
-                # Your action: Increase monitoring sensitivity, etc.
-        
-        # Example 3: Combined conditions for complex decisions
-        if reading.proximity_alert and reading.sound_detected:
-            self.logger.critical("DUAL ALERT: Close object AND sound!")
-            # Your action: High priority response, emergency protocols, etc.
-        
-        # Add your custom decision logic here
-        # You have access to:
-        # - reading.distance (float, -1 if invalid)
-        # - reading.sound_level (int, 0-100%)
-        # - reading.sound_raw (int, raw analog value)
-        # - reading.sound_detected (bool)
-        # - reading.proximity_alert (bool)
-        # - reading.timestamp (Arduino millis)
-        # - reading.received_at (Python datetime)
+    def set_sound_callback(self, callback):
+        """Set callback function for sound alerts"""
+        self.data_processor.sound_processor.set_sound_callback(callback)
     
-    def check_custom_conditions(self, reading: SensorReading):
-        """Check for custom conditions and trigger actions"""
-        # Example: Alert if very close object (< 10cm)
-        if reading.distance > 0 and reading.distance < 10:
-            self.logger.warning(f"Very close object detected: {reading.distance:.1f}cm")
-        
-        # Example: Alert if very loud sound (> 80%)
-        if reading.sound_level > 80:
-            self.logger.warning(f"Very loud sound detected: {reading.sound_level}%")
-    
-    def on_proximity_alert(self):
-        """Called when proximity-only alert is triggered"""
-        # Add your custom logic here
-        pass
-    
-    def on_proximity_and_sound_alert(self):
-        """Called when both proximity and sound alert is triggered"""
-        # Add your custom logic here
-        # Example: Send notification, trigger camera, etc.
-        pass
+    def set_proximity_and_sound_callback(self, callback):
+        """Set callback function for proximity and sound alerts"""
+        self.data_processor.set_proximity_and_sound_callback(callback)
 
 def main():
     """Main function"""
