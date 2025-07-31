@@ -101,9 +101,18 @@ class ArduinoSensorReceiver:
         self.logger.info("Starting sensor data collection...")
         
         try:
+            # Clear any initial garbage data
+            time.sleep(0.5)  # Give Arduino time to start up
+            self.serial_conn.reset_input_buffer()
+            
             while True:
                 if self.serial_conn.in_waiting > 0:
-                    line = self.serial_conn.readline().decode('utf-8').strip()
+                    try:
+                        # Read line with error handling for corrupted bytes
+                        line = self.serial_conn.readline().decode('utf-8', errors='ignore').strip()
+                    except UnicodeDecodeError:
+                        # Skip corrupted data and continue
+                        continue
                     
                     if not line:
                         continue
