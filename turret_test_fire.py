@@ -133,6 +133,12 @@ def main():
         turret.continuous_fire_test(interval=5)
         
     finally:
+        # Send emergency stop commands before disconnecting
+        turret.logger.info("🛑 Emergency stop - sending safety commands...")
+        turret.send_command("STOP")
+        turret.send_command("MOVE:PWM3=20")  # Reset to safe position
+        turret.send_command("MODE:MANUAL")   # Switch back to manual mode
+        time.sleep(0.5)  # Give commands time to execute
         turret.disconnect()
 
 if __name__ == "__main__":
