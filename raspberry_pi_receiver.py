@@ -183,20 +183,18 @@ class ArduinoSensorReceiver:
 
 def main():
     """Main function"""
-    # Try common Arduino ports
-    ports = ['/dev/ttyACM0', '/dev/ttyUSB0', '/dev/ttyACM1', '/dev/ttyUSB1']
+    # Hardcoded ports based on device identification:
+    # /dev/ttyACM0 = CyberBrick Core A11 (Espressif) - SENSOR DATA
+    # /dev/ttyACM1 = Arduino Mega 2560 R3 - ARDUINO SENSORS
+    cyberbrick_port = '/dev/ttyACM0'  # CyberBrick with sensors
     
-    receiver = None
-    for port in ports:
-        receiver = ArduinoSensorReceiver(port=port)
-        if receiver.connect():
-            break
-    else:
-        print("Could not connect to Arduino on any common port.")
-        print("Available ports might be:")
-        print("  /dev/ttyACM0 - Most common for Arduino Uno/Nano")
-        print("  /dev/ttyUSB0 - Common for Arduino with USB-to-serial chip")
-        print("Run 'ls /dev/tty*' to see available ports")
+    receiver = ArduinoSensorReceiver(port=cyberbrick_port)
+    if not receiver.connect():
+        print(f"Could not connect to CyberBrick on {cyberbrick_port}")
+        print("Device mapping:")
+        print("  /dev/ttyACM0 - CyberBrick Core A11 (Espressif)")
+        print("  /dev/ttyACM1 - Arduino Mega 2560 R3")
+        print("Run 'lsusb' to verify devices are connected")
         return
     
     try:
